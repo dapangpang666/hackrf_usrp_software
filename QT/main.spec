@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['main.py'],
-             pathex=['D:\\Anaconda3\\Lib\\site-packages\\qt5_applications\\Qt\\bin', 'D:\\Anaconda3\\Lib\\site-packages\\qt5_applications\\Qt\\plugins', 'D:\\Tensorflow\\hackrf_usrp_software\\QT'],
+             pathex=['D:\\Anaconda3\\Lib\\site-packages\\qt5_applications\\Qt\\bin', 'D:\\Anaconda3\\Lib\\site-packages\\qt5_applications\\Qt\\plugins', 'D:\\Tensorflow\\code\\hackrf_usrp_software\\QT'],
              binaries=[],
              datas=[],
              hiddenimports=[],

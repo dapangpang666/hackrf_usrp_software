@@ -129,11 +129,11 @@ class transimeter(gr.top_block, Qt.QWidget):
         _trans_test_check_box.stateChanged.connect(lambda i: self.set_trans_test(self._trans_test_choices[bool(i)]))
         self.top_grid_layout.addWidget(_trans_test_check_box, 3, 0, 1, 1)
 
-        self._tran_model_options = ('gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64',)
+        self._tran_model_options = ('gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', 'others',)
         self._tran_model_labels = (str(self._tran_model_options[0]), str(self._tran_model_options[1]),
                                     str(self._tran_model_options[2]),  str(self._tran_model_options[3]),
                                     str(self._tran_model_options[4]),  str(self._tran_model_options[5]),
-                                    str(self._tran_model_options[6]))
+                                    str(self._tran_model_options[6]),  str(self._tran_model_options[7]))
         self._tran_model_tool_bar = Qt.QToolBar(self)
         self._tran_model_tool_bar.addWidget(Qt.QLabel(u"调制方式"+": "))
         self._tran_model_combo_box = Qt.QComboBox()
@@ -363,6 +363,8 @@ class transimeter(gr.top_block, Qt.QWidget):
         elif self.tran_model in ['qam64']:
             constellation_points_use = 64
             bits_per_symbol_use = 6
+        elif self.tran_model in ['others']:
+            pass
         else:
             constellation_points_use = 1
             bits_per_symbol_use = 1
@@ -375,7 +377,7 @@ class transimeter(gr.top_block, Qt.QWidget):
                 verbose=False,
                 log=False,
             )
-        else:
+        elif self.tran_model in ['bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
             self.digital_psk_mod_0 = digital.psk.psk_mod(
             constellation_points=constellation_points_use,
             mod_code="gray",
@@ -385,29 +387,37 @@ class transimeter(gr.top_block, Qt.QWidget):
             verbose=False,
             log=False,
             )
+        else:
+            pass
 
 
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, 'D:\\Tensorflow\\GNUradio\\txt\\when you old.txt', True)
-        self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
+        if self.tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
+            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, 'D:\\Tensorflow\\GNUradio\\txt\\when you old.txt', True)
+            self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
+        else:
+            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, 'F:\\source_data\\LFM.dat', True)
+            self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
 
         self.blocks_copy_0 = blocks.copy(gr.sizeof_gr_complex*1)
         self.blocks_copy_0.set_enabled(False)
 
-        self.blks2_packet_encoder_0 = grc_blks2.packet_mod_b(grc_blks2.packet_encoder(
-        		samples_per_symbol=8,
-        		bits_per_symbol=bits_per_symbol_use,
-        		preamble='',
-        		access_code='',
-        		pad_for_usrp=False,
-        	),
-        	payload_length=200,
-        )
+        if self.tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
+            self.blks2_packet_encoder_0 = grc_blks2.packet_mod_b(grc_blks2.packet_encoder(
+                    samples_per_symbol=8,
+                    bits_per_symbol=bits_per_symbol_use,
+                    preamble='',
+                    access_code='',
+                    pad_for_usrp=False,
+                ),
+                payload_length=200,
+            )
 
-        self.analog_sig_source_x_0 = analog.sig_source_c(self.samp_rate, analog.GR_SQR_WAVE, self.samp_rate/self.stop_len, 1, 0)
+            self.analog_sig_source_x_0 = analog.sig_source_c(self.samp_rate, analog.GR_SQR_WAVE, self.samp_rate/self.stop_len, 1, 0)
         
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, self.samp_rate,True)
-        
-        self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
+            self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
+            self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, self.samp_rate,True)
+        else:
+            self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, self.samp_rate,True)
 
         self.analog_noise_source_x_0 = analog.noise_source_c(analog.GR_GAUSSIAN, 0, 0)
 
@@ -422,20 +432,25 @@ class transimeter(gr.top_block, Qt.QWidget):
         ##################################################
         # tran
         self.connect((self.analog_noise_source_x_0, 0), (self.blocks_add_xx_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_add_xx_0, 1))
         self.connect((self.blocks_add_xx_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_copy_0, 0))
         self.connect((self.blocks_copy_0, 0), (self.qtgui_freq_sink_x_1_0, 0))
         self.connect((self.blocks_copy_0, 0), (self.qtgui_time_sink_x_1_0, 0))
-        self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blks2_packet_encoder_0, 0))
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
-        if self.tran_model == 'gmsk':
-            self.connect((self.digital_gmsk_mod_0, 0), (self.blocks_multiply_xx_0, 0))
-            self.connect((self.blks2_packet_encoder_0, 0), (self.digital_gmsk_mod_0, 0))
+        if self.tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
+            self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle_0, 0))
+            self.connect((self.blocks_throttle_0, 0), (self.blks2_packet_encoder_0, 0))
+            self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
+            self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_add_xx_0, 1))
+            if self.tran_model == 'gmsk':
+                self.connect((self.digital_gmsk_mod_0, 0), (self.blocks_multiply_xx_0, 0))
+                self.connect((self.blks2_packet_encoder_0, 0), (self.digital_gmsk_mod_0, 0))
+            else:
+                self.connect((self.digital_psk_mod_0, 0), (self.blocks_multiply_xx_0, 0))
+                self.connect((self.blks2_packet_encoder_0, 0), (self.digital_psk_mod_0, 0))
         else:
-            self.connect((self.digital_psk_mod_0, 0), (self.blocks_multiply_xx_0, 0))
-            self.connect((self.blks2_packet_encoder_0, 0), (self.digital_psk_mod_0, 0))
+            self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle_0, 0))
+            self.connect((self.blocks_throttle_0, 0), (self.blocks_add_xx_0, 1))
+
         if self.tran_kind == 'usrp':
             self.connect((self.blocks_copy_0, 0), (self.uhd_usrp_sink_0, 0))
         else:

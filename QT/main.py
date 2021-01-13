@@ -29,7 +29,7 @@ config_path = pjoin(home_dir, "config.json")
 config_keys = ['tran_address_h',  "tran_kind", 'tran_model',
                'tran_address_u', 'GNUradio_file', "source_kind",
                'source_address_u', 'source_address_h', 'data_file']
-i_model = ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64']
+i_model = ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', 'others']
 i_kind = ['hackrf', 'usrp']
 CONFIG = {}
 if not os.path.exists(config_path):

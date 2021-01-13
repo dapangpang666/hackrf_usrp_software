@@ -112,6 +112,7 @@ class Ui_MainWindow(object):
         self.tran_model_box.addItem("")
         self.tran_model_box.addItem("")
         self.tran_model_box.addItem("")
+        self.tran_model_box.addItem("")
         self.horizontalLayout_3.addWidget(self.tran_model_box)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -152,3 +153,4 @@ class Ui_MainWindow(object):
         self.tran_model_box.setItemText(4, _translate("MainWindow", "QAM8"))
         self.tran_model_box.setItemText(5, _translate("MainWindow", "QAM16"))
         self.tran_model_box.setItemText(6, _translate("MainWindow", "QAM64"))
+        self.tran_model_box.setItemText(7, _translate("MainWindow", "others"))
