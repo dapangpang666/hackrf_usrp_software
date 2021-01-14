@@ -20,14 +20,16 @@ _config = {
     'tran_model': 'bpsk',
     'GNUradio_file': 'D:/GNU-radio/bin',
     'data_file': 'F:/shoufa/',
+    'tran_data_path_modulated': 'F:/source_data/LFM.dat',
+    'tran_data_path_unmodulated': 'F:/source_data/when you old.txt',
     "source_kind": 'hackrf',
     'source_address_u': 'serial=',
     'source_address_h': 'hackrf='}
 
 home_dir = pjoin(os.path.expanduser("~"), ".uhd_ui")
 config_path = pjoin(home_dir, "config.json")
-config_keys = ['tran_address_h',  "tran_kind", 'tran_model',
-               'tran_address_u', 'GNUradio_file', "source_kind",
+config_keys = ['tran_address_h',  "tran_kind", 'tran_model', 'tran_data_path_modulated',
+               'tran_address_u', 'GNUradio_file', "source_kind", 'tran_data_path_unmodulated',
                'source_address_u', 'source_address_h', 'data_file']
 i_model = ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', 'others']
 i_kind = ['hackrf', 'usrp']
@@ -48,6 +50,8 @@ tran_address_u = CONFIG["tran_address_u"]
 tran_address_h = CONFIG["tran_address_h"]
 tran_model = CONFIG["tran_model"]
 GNUradio_file = CONFIG["GNUradio_file"]
+tran_data_path_unmodulated = CONFIG["tran_data_path_unmodulated"]
+tran_data_path_modulated = CONFIG["tran_data_path_modulated"]
 source_kind = CONFIG["source_kind"]
 source_address_u = CONFIG["source_address_u"]
 source_address_h = CONFIG["source_address_h"]
@@ -58,14 +62,21 @@ run_gr_name = 'run_gr.bat'
 def dispaly_all(ui):
     ui.GNUradio_file_text.setText(str(GNUradio_file))
     ui.data_file_text.setText(str(data_file))
+
     if tran_kind == 'usrp':
         ui.tran_address_text.setText(str(tran_address_u))
     else:
         ui.tran_address_text.setText(str(tran_address_h))
+
     if source_kind == 'usrp':
         ui.rece_address_text.setText(str(source_address_u))
     else:
         ui.rece_address_text.setText(str(source_address_h))
+
+    if tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
+        ui.tran_data_file_text.setText(str(tran_data_path_unmodulated))
+    else:
+        ui.tran_data_file_text.setText(str(tran_data_path_modulated))
 
     ui.tran_model_box.setCurrentIndex(i_model.index(tran_model))
     ui.tran_kind_box.setCurrentIndex(i_kind.index(tran_kind))
@@ -154,6 +165,17 @@ def set_GNUradio_file(ui):
     save_config(config_path, CONFIG)
 
 
+def set_tran_data_file(ui):
+    global CONFIG, tran_data_path_unmodulated, tran_data_path_modulated
+    if tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
+        tran_data_path_unmodulated = ui.tran_data_file_text.text()
+        CONFIG["tran_data_path_unmodulated"] = tran_data_path_unmodulated
+    else:
+        tran_data_path_modulated = ui.tran_data_file_text.text()
+        CONFIG["tran_data_path_modulated"] = tran_data_path_modulated
+    save_config(config_path, CONFIG)
+
+
 def set_data_file(ui):
     global CONFIG, data_file
     data_file = ui.data_file_text.text()
@@ -165,6 +187,10 @@ def set_tran_model(ui):
     global CONFIG, tran_model
     tran_model = i_model[ui.tran_model_box.currentIndex()]
     CONFIG["tran_model"] = tran_model
+    if tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
+        ui.tran_data_file_text.setText(str(tran_data_path_unmodulated))
+    else:
+        ui.tran_data_file_text.setText(str(tran_data_path_modulated))
     save_config(config_path, CONFIG)
 
 
@@ -195,6 +221,7 @@ if __name__ == '__main__':
     ui.rece_address_text.editingFinished.connect(partial(set_rece_address, ui))
     ui.GNUradio_file_text.editingFinished.connect(partial(set_GNUradio_file, ui))
     ui.data_file_text.editingFinished.connect(partial(set_data_file, ui))
+    ui.tran_data_file_text.editingFinished.connect(partial(set_tran_data_file, ui))
     ui.tran_model_box.currentIndexChanged.connect(partial(set_tran_model, ui))
     ui.tran_kind_box.currentIndexChanged.connect(partial(set_tran_kind, ui))
     ui.rece_kind_box.currentIndexChanged.connect(partial(set_rece_kind, ui))

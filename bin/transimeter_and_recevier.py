@@ -63,7 +63,8 @@ _config = {
     'rf_gain_rec': 10,
     'file_num': 5,
     'data_file': 'F:/shoufa',
-    'GNUradio_file': 'D:/GNU-radio/bin',
+    'tran_data_path_modulated': 'F:/source_data/LFM.dat',
+    'tran_data_path_unmodulated': 'F:/source_data/when you old.txt',
     "source_kind": 'hackrf',
     'source_address_u': 'serial=',
     'source_address_h': 'hackrf='}
@@ -107,8 +108,9 @@ class transimeter(gr.top_block, Qt.QWidget):
                             'rf_gain_tran', "tran_kind", 'tran_model',
                             'tran_address_u', 'stop_len', 'if_gain_tran', 'bb_gain_tran',
                             'rf_gain_rec', 'file_num', 'data_file',
-                            'GNUradio_file', "source_kind", 'source_address_u',
-                            'source_address_h', 'sample_num']
+                            "source_kind", 'source_address_u',
+                            'source_address_h', 'sample_num',
+                            'tran_data_path_unmodulated', 'tran_data_path_modulated']
         self.CONFIG = {}
         if not os.path.exists(self.config_path):
             # 初始化CONFIG，方便保存数据
@@ -135,6 +137,8 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.tran_kind = self.CONFIG["tran_kind"].encode('gbk')
         self.tran_address_u = self.CONFIG["tran_address_u"].encode('gbk')
         self.tran_address_h = self.CONFIG["tran_address_h"].encode('gbk')
+        self.tran_data_path_unmodulated = self.CONFIG["tran_data_path_unmodulated"].encode('gbk')
+        self.tran_data_path_modulated = self.CONFIG["tran_data_path_modulated"].encode('gbk')
         self.stop_len = self.CONFIG["stop_len"]
         self.tran_model = self.CONFIG["tran_model"].encode('gbk')
         self.Automatic_switching_frequency = Automatic_switching_frequency = False
@@ -149,7 +153,6 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.data_file = self.CONFIG["data_file"].encode('gbk')
         if not os.path.exists(self.data_file):
             os.makedirs(self.data_file)
-        self.GNUradio_file = self.CONFIG["GNUradio_file"].encode('gbk')
         self.source_kind = self.CONFIG["source_kind"].encode('gbk')
         self.source_address_u = self.CONFIG["source_address_u"].encode('gbk')
         self.source_address_h = self.CONFIG["source_address_h"].encode('gbk')
@@ -585,10 +588,10 @@ class transimeter(gr.top_block, Qt.QWidget):
             pass
 
         if self.tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
-            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, 'D:\\Tensorflow\\GNUradio\\txt\\when you old.txt', True)
+            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, self.tran_data_path_unmodulated, True)
             self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
         else:
-            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, 'F:\\source_data\\LFM.dat', True)
+            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, self.tran_data_path_modulated, True)
             self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
 
         self.blocks_copy_0 = blocks.copy(gr.sizeof_gr_complex*1)
@@ -1224,16 +1227,6 @@ class transimeter(gr.top_block, Qt.QWidget):
         Qt.QMetaObject.invokeMethod(self._data_file_line_edit, "setText", Qt.Q_ARG("QString", str(self.data_file)))
         self.blocks_file_sink_0_0.open(self.data_file)
         self.CONFIG["data_file"] = self.data_file
-        self.save_config()
-
-    def get_GNUradio_file(self):
-        return self.GNUradio_file
-
-    def set_GNUradio_file(self, GNUradio_file):
-        self.GNUradio_file = GNUradio_file
-        self.textBrowser.append(u'GNUradio目录更改为:'+str(GNUradio_file))
-        Qt.QMetaObject.invokeMethod(self._GNUradio_file_line_edit, "setText", Qt.Q_ARG("QString", str(self.GNUradio_file)))
-        self.CONFIG["GNUradio_file"] = self.GNUradio_file
         self.save_config()
 
     def new_file(self):

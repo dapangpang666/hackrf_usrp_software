@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>787</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>80</y>
+      <y>70</y>
       <width>501</width>
       <height>24</height>
      </rect>
@@ -28,7 +28,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>80</y>
+      <y>70</y>
       <width>141</width>
       <height>21</height>
      </rect>
@@ -66,7 +66,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>160</y>
+      <y>190</y>
       <width>371</width>
       <height>24</height>
      </rect>
@@ -76,7 +76,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>210</y>
+      <y>240</y>
       <width>371</width>
       <height>24</height>
      </rect>
@@ -85,8 +85,8 @@
    <widget class="QPushButton" name="only_tran_btn">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>260</y>
+      <x>40</x>
+      <y>280</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -98,8 +98,8 @@
    <widget class="QPushButton" name="rece_tran_btn">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>260</y>
+      <x>210</x>
+      <y>280</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -111,8 +111,8 @@
    <widget class="QPushButton" name="only_rece_btn">
     <property name="geometry">
      <rect>
-      <x>380</x>
-      <y>260</y>
+      <x>390</x>
+      <y>280</y>
       <width>121</width>
       <height>51</height>
      </rect>
@@ -125,7 +125,7 @@
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>160</y>
+      <y>190</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -138,7 +138,7 @@
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>210</y>
+      <y>240</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -151,7 +151,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>210</y>
+      <y>240</y>
       <width>269</width>
       <height>23</height>
      </rect>
@@ -191,7 +191,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>160</y>
+      <y>190</y>
       <width>269</width>
       <height>23</height>
      </rect>
@@ -231,7 +231,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>320</y>
+      <y>350</y>
       <width>771</width>
       <height>241</height>
      </rect>
@@ -241,7 +241,7 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>120</y>
+      <y>110</y>
       <width>501</width>
       <height>24</height>
      </rect>
@@ -251,7 +251,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>120</y>
+      <y>110</y>
       <width>141</width>
       <height>21</height>
      </rect>
@@ -260,11 +260,11 @@
      <string>数据存储文件路径:</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>270</y>
+      <x>540</x>
+      <y>290</y>
       <width>185</width>
       <height>23</height>
      </rect>
@@ -314,9 +314,37 @@
          <string>QAM64</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>others</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QLineEdit" name="tran_data_file_text">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>150</y>
+      <width>501</width>
+      <height>24</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>150</y>
+      <width>141</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>发射文件路径:</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -324,7 +352,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>787</width>
      <height>26</height>
     </rect>
    </property>

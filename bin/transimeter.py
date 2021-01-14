@@ -47,6 +47,8 @@ _config = {
     'bb_gain_tran': 50,
     'stop_len': 10000,
     'center_freq': 2300*1000*1000,
+    'tran_data_path_modulated': 'F:/source_data/LFM.dat',
+    'tran_data_path_unmodulated': 'F:/source_data/when you old.txt',
     "tran_kind": 'hackrf',
     'tran_address_u': 'serial=',
     'tran_address_h': 'hackrf=',
@@ -88,6 +90,7 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.config_keys = ['center_freq', 'samp_rate', 'tran_address_h',
                             'rf_gain_tran', "tran_kind", 'tran_model',
                             'tran_address_u', 'stop_len', 'if_gain_tran',
+                            'tran_data_path_modulated', 'tran_data_path_unmodulated'
                             'bb_gain_tran']
         self.CONFIG = {}
         if not os.path.exists(self.config_path):
@@ -109,6 +112,8 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.tran_address_h = self.CONFIG["tran_address_h"].encode('gbk')
         self.stop_len = self.CONFIG["stop_len"]
         self.tran_model = self.CONFIG["tran_model"].encode('gbk')
+        self.tran_data_path_unmodulated = self.CONFIG["tran_data_path_unmodulated"].encode('gbk')
+        self.tran_data_path_modulated = self.CONFIG["tran_data_path_modulated"].encode('gbk')
 
         self.center_freq = self.CONFIG["center_freq"]
         self.samp_rate = self.CONFIG["samp_rate"]
@@ -392,10 +397,10 @@ class transimeter(gr.top_block, Qt.QWidget):
 
 
         if self.tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
-            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, 'D:\\Tensorflow\\GNUradio\\txt\\when you old.txt', True)
+            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char*1, self.tran_data_path_unmodulated, True)
             self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
         else:
-            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, 'F:\\source_data\\LFM.dat', True)
+            self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, self.tran_data_path_modulated, True)
             self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
 
         self.blocks_copy_0 = blocks.copy(gr.sizeof_gr_complex*1)
