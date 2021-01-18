@@ -438,7 +438,7 @@ class transimeter(gr.top_block, Qt.QWidget):
 
         self.qtgui_time_sink_x_1_0.enable_tags(-1, True)
         self.qtgui_time_sink_x_1_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_1_0.enable_autoscale(True)
+        self.qtgui_time_sink_x_1_0.enable_autoscale(False)
         self.qtgui_time_sink_x_1_0.enable_grid(False)
         self.qtgui_time_sink_x_1_0.enable_axis_labels(True)
         self.qtgui_time_sink_x_1_0.enable_control_panel(False)
@@ -841,9 +841,11 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0.set_frequency_range(self.center_freq, self.samp_rate)
         if self.tran_kind == 'usrp':
             self.uhd_usrp_sink_0.set_center_freq(self.center_freq, 0)
-            self.uhd_usrp_source_0.set_center_freq(self.center_freq, 0)
         else:
             self.osmosdr_sink_0.set_center_freq(self.center_freq, 0)
+        if self.source_kind == 'usrp':
+            self.uhd_usrp_source_0.set_center_freq(self.center_freq, 0)
+        else:
             self.osmosdr_source_0.set_center_freq(self.center_freq, 0)
         self.textBrowser.append(u'center_freq更改为:'+str(center_freq))
         self.CONFIG["center_freq"] = self.center_freq
@@ -1086,12 +1088,13 @@ class transimeter(gr.top_block, Qt.QWidget):
 
     def save_file(self, _, event):
         if self.Automatic_switching_frequency:
-            steps_fre = (self.end_Frequency-self.start_Frequency)//self.Frequency_step
+            steps_fre = int((self.end_Frequency-self.start_Frequency)//self.Frequency_step)
         else:
             steps_fre = 1
         if self.Automatic_switching_SNR:
-            steps_SNR = (self.end_SNR-self.start_SNR)//self.SNR_step
-            self.set_Add_SNR(True)
+            steps_SNR = int((self.end_SNR-self.start_SNR)//self.SNR_step)
+            self.Add_SNR = True
+            self._Add_SNR_callback(self.Add_SNR)
         else:
             steps_SNR = 1
         self.blocks_copy_0.set_enabled(True)
@@ -1109,7 +1112,10 @@ class transimeter(gr.top_block, Qt.QWidget):
                 if self.end_sig:
                     break
                 if self.Automatic_switching_SNR:
-                    self.set_add_SNR_value(self.start_SNR+i_SNR*self.SNR_step)
+                    # self.set_add_SNR_value(self.start_SNR+i_SNR*self.SNR_step)
+                    self.add_SNR_value = self.start_SNR+i_SNR*self.SNR_step
+                    Qt.QMetaObject.invokeMethod(self._add_SNR_value_line_edit, "setText", Qt.Q_ARG("QString", str(self.add_SNR_value)))
+                    self.analog_noise_source_x_0.set_amplitude(1/(10**(self.add_SNR_value/20)))
                     if self.Automatic_switching_frequency:
                         self.data_file_temp = fre_path+'SNR_'+str(self.start_SNR+i_SNR*self.SNR_step)+'/'
                     else:
