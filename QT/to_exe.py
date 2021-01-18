@@ -14,13 +14,13 @@ UPX_DIR = r'D:\Anaconda3\Scripts'
 
 if __name__ == '__main__':
     opts = [
-            # '-F',
-            '-w',
+            '-F',
+        #     '-w',
             '--paths='+designer_path,
             '--paths='+plugins_path,
             # '--icon=favicon.ico',
             '--noupx',
             '--clean',
-            "--name=new_test",
+        #     "--name=new_test",
             'main.py']
     run(opts)

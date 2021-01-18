@@ -83,7 +83,11 @@ class recevier(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.home_dir = pjoin(os.path.expanduser("~"), ".uhd_ui")
+        # self.home_dir = pjoin(os.path.expanduser("~"), ".uhd_ui")
+        self.home_dir = pjoin(os.getcwd(), ".uhd_ui")
+        if not os.path.exists(self.home_dir):
+            os.makedirs(self.home_dir)
+        
         self.config_path = pjoin(self.home_dir, "config.json")
 
         self.config_keys = ['sample_num', 'if_gain_rec', 'bb_gain_rec',

@@ -85,12 +85,16 @@ class transimeter(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.home_dir = pjoin(os.path.expanduser("~"), ".uhd_ui")
+        # self.home_dir = pjoin(os.path.expanduser("~"), ".uhd_ui")
+        self.home_dir = pjoin(os.getcwd(), ".uhd_ui")
+        if not os.path.exists(self.home_dir):
+            os.makedirs(self.home_dir)
+        
         self.config_path = pjoin(self.home_dir, "config.json")
         self.config_keys = ['center_freq', 'samp_rate', 'tran_address_h',
                             'rf_gain_tran', "tran_kind", 'tran_model',
                             'tran_address_u', 'stop_len', 'if_gain_tran',
-                            'tran_data_path_modulated', 'tran_data_path_unmodulated'
+                            'tran_data_path_modulated', 'tran_data_path_unmodulated',
                             'bb_gain_tran']
         self.CONFIG = {}
         if not os.path.exists(self.config_path):

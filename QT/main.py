@@ -26,7 +26,11 @@ _config = {
     'source_address_u': 'serial=',
     'source_address_h': 'hackrf='}
 
-home_dir = pjoin(os.path.expanduser("~"), ".uhd_ui")
+# home_dir = pjoin(os.path.expanduser("~"), ".uhd_ui")
+home_dir = pjoin(os.getcwd(), ".uhd_ui")
+if not os.path.exists(home_dir):
+    os.makedirs(home_dir)
+            
 config_path = pjoin(home_dir, "config.json")
 config_keys = ['tran_address_h',  "tran_kind", 'tran_model', 'tran_data_path_modulated',
                'tran_address_u', 'GNUradio_file', "source_kind", 'tran_data_path_unmodulated',
