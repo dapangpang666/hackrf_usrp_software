@@ -40,6 +40,8 @@ from gnuradio import uhd
 from gnuradio import qtgui
 
 
+MS = 2048
+
 _config = {
     'start_SNR': 10,
     'end_SNR': 20,
@@ -425,13 +427,16 @@ class transimeter(gr.top_block, Qt.QWidget):
         ##################################################
         # transimeter
         ##################################################
+        _wave_nums = 20
+        wave_width = _wave_nums*MS  # 50ms
+        gui_update_time_interval = 0.5  # _wave_nums/200
         self.qtgui_time_sink_x_1_0 = qtgui.time_sink_c(
-        	1024, #size
+        	wave_width, #size 10S
         	self.samp_rate, #samp_rate
         	"trans_time", #name
         	1 #number of inputs
         )
-        self.qtgui_time_sink_x_1_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_1_0.set_update_time(gui_update_time_interval)
         self.qtgui_time_sink_x_1_0.set_y_axis(-1, 1)
 
         self.qtgui_time_sink_x_1_0.set_y_label('Amplitude', "")
@@ -662,12 +667,12 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.blocks_copy_1.set_enabled(False)
 
         self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
-        	1024, #size
+        	wave_width, #size 1S
         	self.samp_rate, #samp_rate
         	"rece_time", #name
         	1 #number of inputs
         )
-        self.qtgui_time_sink_x_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0.set_update_time(gui_update_time_interval)
         self.qtgui_time_sink_x_0.set_y_axis(-1, 1)
 
         self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
