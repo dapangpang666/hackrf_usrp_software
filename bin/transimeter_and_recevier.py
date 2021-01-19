@@ -16,7 +16,7 @@ if __name__ == '__main__':
         except:
             print "Warning: failed to XInitThreads()"
 
-from PyQt4 import Qt
+from PyQt4 import Qt, QtCore
 from PyQt4.QtCore import QObject, pyqtSlot
 from gnuradio import blocks
 from gnuradio import analog
@@ -851,9 +851,9 @@ class transimeter(gr.top_block, Qt.QWidget):
 
     def set_center_freq(self, center_freq):
         self.center_freq = center_freq
-        Qt.QMetaObject.invokeMethod(self._center_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.center_freq)))
         self.qtgui_freq_sink_x_1_0.set_frequency_range(self.center_freq, self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.center_freq, self.samp_rate)
+        Qt.QMetaObject.invokeMethod(self._center_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.center_freq)))
         if self.tran_kind == 'usrp':
             self.uhd_usrp_sink_0.set_center_freq(self.center_freq, 0)
         else:
@@ -863,8 +863,9 @@ class transimeter(gr.top_block, Qt.QWidget):
         else:
             self.osmosdr_source_0.set_center_freq(self.center_freq, 0)
         self.textBrowser.append(u'center_freq更改为:'+str(center_freq))
-        self.CONFIG["center_freq"] = self.center_freq
-        self.save_config()
+        if self.Automatic_switching_frequency == False:
+            self.CONFIG["center_freq"] = self.center_freq
+            self.save_config()
 
     ##################################################
     # trans
@@ -887,17 +888,17 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.blocks_copy_0.set_enabled(True)
         delay_time = self.stop_len/self.samp_rate
         while True:
-            # self.osmosdr_sink_0.set_center_freq(2.3*1e9 - 2e6, 0)
-            # self.osmosdr_source_0.set_center_freq(2.3*1e9 - 2e6, 0)
-            # event_test.wait(1e-5)
-            
-            # self.osmosdr_sink_0.set_center_freq(2.3*1e9 + 1e6, 0)
-            # self.osmosdr_source_0.set_center_freq(2.3*1e9 + 1e6, 0)
-            # event_test.wait(1e-5)
-            
-            # self.osmosdr_sink_0.set_center_freq(2.3*1e9 + 3e6, 0)
-            # self.osmosdr_source_0.set_center_freq(2.3*1e9 + 3e6, 0)
-            # event_test.wait(1e-5)
+            # Qt.QMetaObject.invokeMethod(self._center_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(2.3*1e9 - 2e6)))
+            # self._center_freq_line_edit.emit(QtCore.SIGNAL("returnPressed()"))
+            # event_test.wait(3)
+
+            # Qt.QMetaObject.invokeMethod(self._center_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(2.3*1e9 + 1e6)))
+            # self._center_freq_line_edit.emit(QtCore.SIGNAL("returnPressed()"))
+            # event_test.wait(3)
+
+            # Qt.QMetaObject.invokeMethod(self._center_freq_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(2.3*1e9 + 3e6)))
+            # self._center_freq_line_edit.emit(QtCore.SIGNAL("returnPressed()"))
+            # event_test.wait(3)
             
             if self.end_sig:
                 self.blocks_copy_0.set_enabled(False)
@@ -1009,7 +1010,7 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.add_SNR_value = add_SNR_value
         Qt.QMetaObject.invokeMethod(self._add_SNR_value_line_edit, "setText", Qt.Q_ARG("QString", str(self.add_SNR_value)))
         if self.Add_SNR:
-            self.analog_noise_source_x_0.set_amplitude(1/(10**(add_SNR_value/20)))
+            self.analog_noise_source_x_0.set_amplitude(1/(10**(self.add_SNR_value/20)))
             self.textBrowser.append(u'额外信噪比:'+str(add_SNR_value))
 
     def get_end_Frequency(self):
@@ -1132,7 +1133,10 @@ class transimeter(gr.top_block, Qt.QWidget):
             if self.end_sig:
                 break
             if self.Automatic_switching_frequency:
-                self.set_center_freq(self.start_Frequency+i_fre*self.Frequency_step)
+                Qt.QMetaObject.invokeMethod(
+                    self._center_freq_line_edit, "setText", Qt.Q_ARG(
+                        "QString", eng_notation.num_to_str(self.start_Frequency+i_fre*self.Frequency_step)))
+                self._center_freq_line_edit.emit(QtCore.SIGNAL("returnPressed()"))
                 fre_path = self.data_file+'/all_change/'+'center_freq_'+str(self.start_Frequency+i_fre*self.Frequency_step)+'/'
                 if self.Automatic_switching_SNR == False:
                     self.data_file_temp = self.data_file+'/fre_change/'+'center_freq_'+str(self.start_Frequency+i_fre*self.Frequency_step)+'/'
@@ -1140,10 +1144,10 @@ class transimeter(gr.top_block, Qt.QWidget):
                 if self.end_sig:
                     break
                 if self.Automatic_switching_SNR:
-                    # self.set_add_SNR_value(self.start_SNR+i_SNR*self.SNR_step)
-                    self.add_SNR_value = self.start_SNR+i_SNR*self.SNR_step
-                    Qt.QMetaObject.invokeMethod(self._add_SNR_value_line_edit, "setText", Qt.Q_ARG("QString", str(self.add_SNR_value)))
-                    self.analog_noise_source_x_0.set_amplitude(1/(10**(self.add_SNR_value/20)))
+                    Qt.QMetaObject.invokeMethod(
+                        self._add_SNR_value_line_edit, "setText", Qt.Q_ARG(
+                            "QString", eng_notation.num_to_str(self.start_SNR+i_SNR*self.SNR_step)))
+                    self._add_SNR_value_line_edit.emit(QtCore.SIGNAL("returnPressed()"))
                     if self.Automatic_switching_frequency:
                         self.data_file_temp = fre_path+'SNR_'+str(self.start_SNR+i_SNR*self.SNR_step)+'/'
                     else:

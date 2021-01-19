@@ -21,7 +21,7 @@ _config = {
     'GNUradio_file': 'D:/GNU-radio/bin',
     'data_file': 'F:/shoufa/',
     'tran_data_path_modulated': 'F:/source_data/LFM.dat',
-    'tran_data_path_unmodulated': 'F:/source_data/when you old.txt',
+    'tran_data_path_unmodulated': 'F:/source_data/when_you_old.txt',
     "source_kind": 'hackrf',
     'source_address_u': 'serial=',
     'source_address_h': 'hackrf='}
