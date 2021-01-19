@@ -30,7 +30,6 @@ _config = {
 home_dir = pjoin(os.getcwd(), ".uhd_ui")
 if not os.path.exists(home_dir):
     os.makedirs(home_dir)
-            
 config_path = pjoin(home_dir, "config.json")
 config_keys = ['tran_address_h',  "tran_kind", 'tran_model', 'tran_data_path_modulated',
                'tran_address_u', 'GNUradio_file', "source_kind", 'tran_data_path_unmodulated',
@@ -191,11 +190,13 @@ def set_tran_model(ui):
     global CONFIG, tran_model
     tran_model = i_model[ui.tran_model_box.currentIndex()]
     CONFIG["tran_model"] = tran_model
+    # print(CONFIG["stop_len"])
     if tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
         ui.tran_data_file_text.setText(str(tran_data_path_unmodulated))
     else:
         ui.tran_data_file_text.setText(str(tran_data_path_modulated))
     save_config(config_path, CONFIG)
+    # print(CONFIG["stop_len"])
 
 
 def start_only_tran(ui):
