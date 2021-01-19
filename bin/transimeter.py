@@ -429,9 +429,11 @@ class transimeter(gr.top_block, Qt.QWidget):
             self.analog_sig_source_x_0 = analog.sig_source_c(self.samp_rate, analog.GR_SQR_WAVE, self.samp_rate/self.stop_len, 1, 0)
         
             self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
+            self.blocks_multiply_xx_1 = blocks.multiply_vcc(1)
             self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, self.samp_rate,True)
         else:
             self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, self.samp_rate,True)
+            self.blocks_multiply_xx_1 = blocks.multiply_vcc(1)
 
         self.analog_noise_source_x_0 = analog.noise_source_c(analog.GR_GAUSSIAN, 0, 0)
 
@@ -445,7 +447,6 @@ class transimeter(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         # tran
-        self.connect((self.analog_noise_source_x_0, 0), (self.blocks_add_xx_0, 0))
         self.connect((self.blocks_add_xx_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_copy_0, 0))
         self.connect((self.blocks_copy_0, 0), (self.qtgui_freq_sink_x_1_0, 0))
@@ -455,6 +456,9 @@ class transimeter(gr.top_block, Qt.QWidget):
             self.connect((self.blocks_throttle_0, 0), (self.blks2_packet_encoder_0, 0))
             self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
             self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_add_xx_0, 1))
+            self.connect((self.analog_noise_source_x_0, 0), (self.blocks_multiply_xx_1, 1))
+            self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_multiply_xx_1, 0))
+            self.connect((self.blocks_multiply_xx_1, 0), (self.blocks_add_xx_0, 0))
             if self.tran_model == 'gmsk':
                 self.connect((self.digital_gmsk_mod_0, 0), (self.blocks_multiply_xx_0, 0))
                 self.connect((self.blks2_packet_encoder_0, 0), (self.digital_gmsk_mod_0, 0))
@@ -464,6 +468,9 @@ class transimeter(gr.top_block, Qt.QWidget):
         else:
             self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle_0, 0))
             self.connect((self.blocks_throttle_0, 0), (self.blocks_add_xx_0, 1))
+            self.connect((self.analog_noise_source_x_0, 0), (self.blocks_multiply_xx_1, 1))
+            self.connect((self.blocks_throttle_0, 0), (self.blocks_multiply_xx_1, 0))
+            self.connect((self.blocks_multiply_xx_1, 0), (self.blocks_add_xx_0, 0))
 
         if self.tran_kind == 'usrp':
             self.connect((self.blocks_copy_0, 0), (self.uhd_usrp_sink_0, 0))
