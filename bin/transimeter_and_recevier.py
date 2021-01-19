@@ -1116,11 +1116,11 @@ class transimeter(gr.top_block, Qt.QWidget):
 
     def save_file(self, _, event):
         if self.Automatic_switching_frequency:
-            steps_fre = int((self.end_Frequency-self.start_Frequency)//self.Frequency_step)
+            steps_fre = int((self.end_Frequency-self.start_Frequency)//self.Frequency_step+1)
         else:
             steps_fre = 1
         if self.Automatic_switching_SNR:
-            steps_SNR = int((self.end_SNR-self.start_SNR)//self.SNR_step)
+            steps_SNR = int((self.end_SNR-self.start_SNR)//self.SNR_step+1)
             self.Add_SNR = True
             self._Add_SNR_callback(self.Add_SNR)
         else:
