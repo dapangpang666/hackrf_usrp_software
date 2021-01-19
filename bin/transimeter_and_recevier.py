@@ -1029,10 +1029,13 @@ class transimeter(gr.top_block, Qt.QWidget):
     def set_stop_len(self, stop_len):
         self.stop_len = stop_len
         Qt.QMetaObject.invokeMethod(self._stop_len_line_edit, "setText", Qt.Q_ARG("QString", eng_notation.num_to_str(self.stop_len)))
-        self.analog_sig_source_x_0.set_frequency(self.samp_rate/self.stop_len)
-        self.textBrowser.append(u'stop_len更改为:'+str(stop_len))
-        self.CONFIG["stop_len"] = self.stop_len
-        self.save_config()
+        if self.tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
+            self.analog_sig_source_x_0.set_frequency(self.samp_rate/self.stop_len)
+            self.textBrowser.append(u'stop_len更改为:'+str(stop_len))
+            self.CONFIG["stop_len"] = self.stop_len
+            self.save_config()
+        else:
+            self.textBrowser.append(u'该调制方式与发射机方波长度无关')
 
     def get_SNR_step(self):
         return self.SNR_step
