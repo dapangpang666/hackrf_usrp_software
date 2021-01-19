@@ -36,6 +36,7 @@ import osmosdr
 import json, os
 from gnuradio import qtgui
 
+MS = 2048
 
 _config = {
     'sample_num': 10*1000*1000,
@@ -261,13 +262,16 @@ class recevier(gr.top_block, Qt.QWidget):
         self.blocks_copy_1 = blocks.copy(gr.sizeof_gr_complex*1)
         self.blocks_copy_1.set_enabled(True)
 
+        _wave_nums = 20
+        wave_width = _wave_nums*MS  # 50ms
+        gui_update_time_interval = 0.5  # _wave_nums/200
         self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
-        	1024, #size
+        	wave_width, #size
         	self.samp_rate, #samp_rate
         	"time", #name
         	1 #number of inputs
         )
-        self.qtgui_time_sink_x_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0.set_update_time(gui_update_time_interval)
         self.qtgui_time_sink_x_0.set_y_axis(-1, 1)
 
         self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
@@ -374,6 +378,7 @@ class recevier(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_copy_1, 0), (self.qtgui_time_sink_x_0, 0))
 
     def closeEvent(self, event):
+        self.set_end_btn()
         self.settings = Qt.QSettings("GNU Radio", "recevier")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
@@ -387,7 +392,7 @@ class recevier(gr.top_block, Qt.QWidget):
         th = threading.Thread(target=self.save_file, args=(0, event))
         th.start()
         self.textBrowser.append(u'开始采集')
-        self.blocks_copy_1.set_enabled(False)
+        # self.blocks_copy_1.set_enabled(False)
 
 
     def save_file(self, _, event):
@@ -410,12 +415,12 @@ class recevier(gr.top_block, Qt.QWidget):
         self.blocks_copy_0.set_enabled(True)
         event.wait(0.1)
         self.blocks_copy_0.set_enabled(False)
-        self.blocks_copy_1.set_enabled(True)
+        # self.blocks_copy_1.set_enabled(True)
 
     def set_end_btn(self):
         self.end_sig = True
         self.textBrowser.append(u'结束采集')
-        self.blocks_copy_1.set_enabled(True)
+        # self.blocks_copy_1.set_enabled(True)
 
     def get_source_kind(self):
         return self.source_kind

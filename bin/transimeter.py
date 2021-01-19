@@ -39,6 +39,8 @@ import time, json
 from gnuradio import uhd
 from gnuradio import qtgui
 
+MS = 2048
+
 
 _config = {
     'samp_rate': 2*1000*1000,
@@ -237,13 +239,16 @@ class transimeter(gr.top_block, Qt.QWidget):
         ##################################################
         # transimeter
         ##################################################
+        _wave_nums = 20
+        wave_width = _wave_nums*MS  # 50ms
+        gui_update_time_interval = 0.5  # _wave_nums/200
         self.qtgui_time_sink_x_1_0 = qtgui.time_sink_c(
-        	1024, #size
+        	wave_width, #size
         	self.samp_rate, #samp_rate
         	"trans_time", #name
         	1 #number of inputs
         )
-        self.qtgui_time_sink_x_1_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_1_0.set_update_time(gui_update_time_interval)
         self.qtgui_time_sink_x_1_0.set_y_axis(-1, 1)
 
         self.qtgui_time_sink_x_1_0.set_y_label('Amplitude', "")
@@ -469,6 +474,7 @@ class transimeter(gr.top_block, Qt.QWidget):
     # Founctions
     ##################################################
     def closeEvent(self, event):
+        self.set_trans_test(False)
         self.settings = Qt.QSettings("GNU Radio", "transimeter")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()

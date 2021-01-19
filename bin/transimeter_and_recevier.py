@@ -808,6 +808,7 @@ class transimeter(gr.top_block, Qt.QWidget):
     # Founctions
     ##################################################
     def closeEvent(self, event):
+        self.set_end_btn()
         self.settings = Qt.QSettings("GNU Radio", "transimeter")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
@@ -878,24 +879,23 @@ class transimeter(gr.top_block, Qt.QWidget):
     def source_out(self, _, event_test):
         self.blocks_copy_0.set_enabled(True)
         delay_time = self.stop_len/self.samp_rate
-        # event_test.wait(1000e-3)
         while True:
-            self.osmosdr_sink_0.set_center_freq(2.3*1e9 - 2e6, 0)
-            self.osmosdr_source_0.set_center_freq(2.3*1e9 - 2e6, 0)
-            event_test.wait(1e-5)
+            # self.osmosdr_sink_0.set_center_freq(2.3*1e9 - 2e6, 0)
+            # self.osmosdr_source_0.set_center_freq(2.3*1e9 - 2e6, 0)
+            # event_test.wait(1e-5)
             
-            self.osmosdr_sink_0.set_center_freq(2.3*1e9 + 1e6, 0)
-            self.osmosdr_source_0.set_center_freq(2.3*1e9 + 1e6, 0)
-            event_test.wait(1e-5)
+            # self.osmosdr_sink_0.set_center_freq(2.3*1e9 + 1e6, 0)
+            # self.osmosdr_source_0.set_center_freq(2.3*1e9 + 1e6, 0)
+            # event_test.wait(1e-5)
             
-            self.osmosdr_sink_0.set_center_freq(2.3*1e9 + 3e6, 0)
-            self.osmosdr_source_0.set_center_freq(2.3*1e9 + 3e6, 0)
-            event_test.wait(1e-5)
+            # self.osmosdr_sink_0.set_center_freq(2.3*1e9 + 3e6, 0)
+            # self.osmosdr_source_0.set_center_freq(2.3*1e9 + 3e6, 0)
+            # event_test.wait(1e-5)
             
             if self.end_sig:
                 self.blocks_copy_0.set_enabled(False)
                 break
-            # event_test.wait(delay_time)
+            event_test.wait(delay_time)
 
     def get_start_SNR(self):
         return self.start_SNR
