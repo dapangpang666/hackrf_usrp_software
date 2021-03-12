@@ -9,10 +9,11 @@ from PyQt5.QtWidgets import QFileDialog
 #     compileUi(ui_file, py_file)
 #     ui_file.close()
 
-from window_ui1 import Ui_MainWindow
+from window_ui import Ui_MainWindow
 from functools import partial
 import time, json
 import subprocess
+import threading
 from os.path import join as pjoin
 
 
@@ -209,17 +210,29 @@ def set_tran_model(ui):
 
 def start_only_tran(ui):
     run_gr_path = GNUradio_file+'/'+run_gr_name
-    cmd_in_out(ui, run_gr_path+' bin/transimeter.py')
+    command_only_tran = run_gr_path+' bin/transimeter.py'
+    # event_shoufa = threading.Event()
+    th_only_tran = threading.Thread(target=cmd_in_out,
+                                    args=(ui, command_only_tran))
+    th_only_tran.start()
 
 
 def start_only_rece(ui):
     run_gr_path = GNUradio_file+'/'+run_gr_name
-    cmd_in_out(ui, run_gr_path+' bin/recevier.py')
+    command_only_rece = run_gr_path+' bin/recevier.py'
+    # event_shoufa = threading.Event()
+    th_only_rece = threading.Thread(target=cmd_in_out,
+                                    args=(ui, command_only_rece))
+    th_only_rece.start()
 
 
 def start_rece_tran(ui):
     run_gr_path = GNUradio_file+'/'+run_gr_name
-    cmd_in_out(ui, run_gr_path+' bin/transimeter_and_recevier.py')
+    command_rece_tran = run_gr_path+' bin/transimeter_and_recevier.py'
+    # event_shoufa = threading.Event()
+    th_rece_tran = threading.Thread(target=cmd_in_out,
+                                    args=(ui, command_rece_tran))
+    th_rece_tran.start()
 
 
 def open_gnu_dir(ui):
@@ -236,8 +249,8 @@ def open_gnu_dir(ui):
             ui.GNUradio_file_text.setText(new_dir)
             ui.textBrowser.append("GNURadio Path has been changed to: " + new_dir)
             set_GNUradio_file(ui)
-            
-        
+
+
 def open_saved_dir(ui):
     new_dir = QFileDialog.getExistingDirectory(None,
                                                "选择数据存储文件路径:",
@@ -252,8 +265,8 @@ def open_saved_dir(ui):
             ui.data_file_text.setText(new_dir)
             ui.textBrowser.append("数据存储文件路径 has been changed to: " + new_dir)
             set_data_file(ui)
-            
-        
+
+
 def open_source_dir(ui):
     new_dir = QFileDialog.getOpenFileName(None,
                                           "选择发射文件路径",
@@ -267,8 +280,8 @@ def open_source_dir(ui):
         else:
             ui.tran_data_file_text.setText(new_dir)
             ui.textBrowser.append("发射文件路径 has been changed to: " + new_dir)
-            set_tran_data_file(ui)          
-        
+            set_tran_data_file(ui)
+
 
 
 if __name__ == '__main__':
