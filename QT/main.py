@@ -1,7 +1,15 @@
 import sys, os
 from PyQt5.QtWidgets import QApplication, QMainWindow
+from PyQt5.QtWidgets import QFileDialog
 
-from window_ui import Ui_MainWindow
+# from PyQt5.uic import compileUi
+
+# with open(r"D:\Tensorflow\code\hackrf_usrp_software\QT\window_ui1.py", "wt", encoding="utf-8") as py_file:
+#     ui_file = open(r"D:\Tensorflow\code\hackrf_usrp_software\QT\test.ui", "r", encoding="utf-8")
+#     compileUi(ui_file, py_file)
+#     ui_file.close()
+
+from window_ui1 import Ui_MainWindow
 from functools import partial
 import time, json
 import subprocess
@@ -214,6 +222,55 @@ def start_rece_tran(ui):
     cmd_in_out(ui, run_gr_path+' bin/transimeter_and_recevier.py')
 
 
+def open_gnu_dir(ui):
+    new_dir = QFileDialog.getExistingDirectory(None,
+                                               "选择 GNU Radio 路径",
+                                               ui.GNUradio_file_text.text(),
+                                               QFileDialog.ShowDirsOnly)
+    if new_dir == "":
+        return
+    else:
+        if ui.GNUradio_file_text.text() == new_dir:
+            return
+        else:
+            ui.GNUradio_file_text.setText(new_dir)
+            ui.textBrowser.append("GNURadio Path has been changed to: " + new_dir)
+            set_GNUradio_file(ui)
+            
+        
+def open_saved_dir(ui):
+    new_dir = QFileDialog.getExistingDirectory(None,
+                                               "选择数据存储文件路径:",
+                                               ui.data_file_text.text(),
+                                               QFileDialog.ShowDirsOnly)
+    if new_dir == "":
+        return
+    else:
+        if ui.data_file_text.text() == new_dir:
+            return
+        else:
+            ui.data_file_text.setText(new_dir)
+            ui.textBrowser.append("数据存储文件路径 has been changed to: " + new_dir)
+            set_data_file(ui)
+            
+        
+def open_source_dir(ui):
+    new_dir = QFileDialog.getOpenFileName(None,
+                                          "选择发射文件路径",
+                                          ui.tran_data_file_text.text()
+                                          )[0]
+    if new_dir == "":
+        return
+    else:
+        if ui.tran_data_file_text.text() == new_dir:
+            return
+        else:
+            ui.tran_data_file_text.setText(new_dir)
+            ui.textBrowser.append("发射文件路径 has been changed to: " + new_dir)
+            set_tran_data_file(ui)          
+        
+
+
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
@@ -235,4 +292,9 @@ if __name__ == '__main__':
     ui.only_tran_btn.clicked.connect(partial(start_only_tran, ui))
     ui.only_rece_btn.clicked.connect(partial(start_only_rece, ui))
     ui.rece_tran_btn.clicked.connect(partial(start_rece_tran, ui))
+    
+    ui.select_gnu_path_btn.clicked.connect(partial(open_gnu_dir, ui))
+    ui.select_save_path_btn.clicked.connect(partial(open_saved_dir, ui))
+    ui.select_source_path_btn.clicked.connect(partial(open_source_dir, ui))
+    
     sys.exit(app.exec_())
