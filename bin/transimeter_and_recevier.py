@@ -150,7 +150,7 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.trans_test = trans_test = False
         self.Add_SNR = Add_SNR = False
         self.add_SNR_value = add_SNR_value = 20.0
-        self.volume = volume = 1
+        self.volume = volume = 10
 
         self.rf_gain_rec = self.CONFIG["rf_gain_rec"]
         self.file_num = self.CONFIG["file_num"]
@@ -431,7 +431,7 @@ class transimeter(gr.top_block, Qt.QWidget):
         ##################################################
         _wave_nums = 20
         wave_width = _wave_nums*MS  # 50ms
-        gui_update_time_interval = 0.5  # _wave_nums/200
+        gui_update_time_interval = 1.0  # _wave_nums/200
         self.qtgui_time_sink_x_1_0 = qtgui.time_sink_c(
         	wave_width, #size 10S
         	self.samp_rate, #samp_rate
@@ -833,8 +833,9 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_1_0.set_frequency_range(self.center_freq, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(self.center_freq, self.samp_rate)
-        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
-        self.analog_sig_source_x_0.set_frequency(self.samp_rate/self.stop_len)
+        if self.tran_model in ['gmsk', 'bpsk', 'qpsk', '8psk', 'qam8',  'qam16', 'qam64', ]:
+            self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
+            self.analog_sig_source_x_0.set_frequency(self.samp_rate/self.stop_len)
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
         if self.tran_kind == 'usrp':
             self.uhd_usrp_sink_0.set_samp_rate(self.samp_rate)
