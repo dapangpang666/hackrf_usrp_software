@@ -150,7 +150,7 @@ class transimeter(gr.top_block, Qt.QWidget):
         self.trans_test = trans_test = False
         self.Add_SNR = Add_SNR = False
         self.add_SNR_value = add_SNR_value = 20.0
-        self.volume = volume = 10
+        self.volume = volume = 1
 
         self.rf_gain_rec = self.CONFIG["rf_gain_rec"]
         self.file_num = self.CONFIG["file_num"]
